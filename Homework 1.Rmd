@@ -30,3 +30,226 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r}
+dpois(2, 2.3)
+1-ppois(1, 2.3)
+
+dpois(0, 2.3) + dpois(1, 2.3)
+dpois(0, 2.3)
+
+ppois(5, 2.3)
+
+y<-c(11,7,2,7,4,8,13,3,6,6,15,8,2,4,5,11,11,4,9,3,9,8,5,9,6)
+mean(y)
+
+```
+```{r}
+library(tidyverse)
+
+temp <- c(64,65,65,64,61,55,39,41,46,59,56,56,62,37,37,45,57,58,60,55)
+butterfat <- c(4.65,4.58,4.67,4.60,4.83,4.55,5.14,4.71,4.69,4.65,4.36,4.82,4.65,4.66,4.95,4.60,4.68,4.65,4.6,.446)
+
+cows <- data.frame(temp, butterfat)
+
+cows %>% 
+ggplot() +
+  geom_point(aes(x = temp, y = butterfat))+
+  theme_classic()+
+  ggtitle("Temperature vs butterfat percentage")+
+  ylab("butterfat %")
+
+mean(temp)
+sd(temp)
+mean(butterfat)
+sd(butterfat)
+
+cor(temp, butterfat)
+```
+
+```{r}
+i = c(1,2,3,4,5)
+((6-i)**2 - (5-i)**2)/25
+```
+
+
+
+
+```{r}
+(7*1*1*6*6*6*6)/(7**7)
+```
+```{r}
+(choose(7, 2)*5)/(factorial(13)/(factorial(7)*factorial(6)))
+
+```
+
+```{r}
+dbinom(2, 6, (1/7))*2
+```
+
+
+```{r}
+duplicate <- 6*(choose(4,4)*(factorial(4)-1)/factorial(4)+choose(4,3)*(factorial(3)-1)/factorial(3)+choose(4,2))
+
+6**4 - duplicate
+
+(choose(7,3)*7*(6**4))/(7**7) -(choose(7,3)*choose(4,3)*7*6*5)/(7**7)
+
+(choose(7,3)*choose(4,3)*7*6*5/2)/(7**7)
+
+
+
+
+
+
+```
+```{r}
+choose(7,3)*choose(4,3)
+```
+```{r}
+602/1716 - 
+```
+
+```{r}
+x <- c(0,4,4,9,2)
+n <- length(x)
+n <- k
+```
+
+```{r}
+choose(5,2)
+
+```
+
+```{r}
+1-(4/5)**5
+```
+
+
+```{r}
+set.seed(222)
+N<-100000
+k<-5
+boot<-matrix(0,N,k)
+for (i in 1:N){
+  boot[i, ]<- sample(x, k, replace=TRUE)
+}
+
+rowHas<-function(row, obs){
+  out<-0
+  temp <- sum(row==obs)
+  if (temp>0) out<-1
+  return(out)
+}
+
+#rowHas(boot[1,], 4)
+
+count0<-apply(boot, 1, rowHas, 0)
+count4<-apply(boot, 1, rowHas, 4)
+count9<-apply(boot, 1, rowHas, 9)
+count2<-apply(boot, 1, rowHas, 2)
+sum(count0)/N
+sum(count4)/N
+sum(count9)/N
+sum(count2)/N
+
+```
+
+```{r}
+bootMeans<-apply(boot, 1, mean)
+hist(bootMeans, prob=FALSE)
+abline(v=mean(x), col="red")
+```
+
+
+```{r}
+set.seed(46)
+library(stats)
+x <- c(0,4,4,2,9)
+n<-length(x)
+u <- unique(x)
+m <- length(u)
+samp <- rmultinom(1,5,c(1/5,2/5,1/5,1/5))
+samp
+```
+
+```{r}
+1-pbinom(9, 20, p = 0.25)
+```
+
+
+```{r}
+sum(unlist(lapply(c(0:10), function(x) (3**(x)*(choose(20, (20-x))))/(4**20))))
+```
+
+```{r}
+180/12
+```
+
+```{r}
+(5*6*factorial(31)/factorial(15))*(factorial(30)/factorial(15))*(factorial(29)/factorial(15))/(factorial(366)/factorial(180))
+```
+
+
+
+```{r}
+(19/20)**choose(,2)
+```
+```{r}
+choose(40,2)
+```
+
+
+```{r}
+(1-(20/choose(40,2)))**(choose(20,2))
+```
+
+
+```{r}
+()/(choose(780, choose(20, 2)))
+```
+
+
+```{r}
+choose(760, 780)
+```
+
+```{r}
+(23)/(365) + (22/364) + (21/363) + (20/362) + (19/361) 
+```
+```{r}
+(365+342)*(.5)
+
+355 * 
+```
+
+```{r}
+y = c(0, 1/2, 2/3, 3/4, 4/5)
+
+(1/3)*((2/3)**(y/(1-y)))
+
+(1/2)*((2/3)**(y**2))
+```
+
+
+```{r}
+x <- seq(-50, 50, 0.5)
+y <- abs(x**3)
+
+round((1/2)*exp(-abs(x)), 5) == round((1/2)*exp(-(y)**(1/3)), 5)
+```
+
+```{r}
+x <- c(1:50)
+plot(x, (1/6)*exp(-(x)**(1/3)), type = "l", col = "green")
+plot(x, (1/2)*exp(-abs(x)), type = "l", col = "blue")
+```
+```{r}
+x <- seq(0, 1, 0.01)
+y <- 1 - x**2
+y_inverse <- sqrt(1-y)
+round(x, 2) == round(y_inverse, 2)
+#y
+```
+
+

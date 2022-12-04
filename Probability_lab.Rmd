@@ -1,0 +1,254 @@
+---
+title: "scratch"
+author: "Josiah Gilbert"
+date: '2022-09-30'
+output: html_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+x <- runif(100, 1, 9)
+var(x)
+a<-10
+b<- 100
+y <- a*x+b
+var(y)
+```
+
+```{r}
+n <- 10
+p <- 0.5
+x <- 0:n
+t <- seq(-3,3,length=100)
+mgfBi <- (exp(t)*p + 1-p)^n
+pmfBi <- dbinom(x, n, p)
+cdfBi <- pbinom(x, n, p)
+
+par(mfrow=c(2,2))
+plot(stepfun(x, c(0, cdfBi)), vertical = FALSE, pch = 16, main = "Binomial CDF", ylab = "F(x)")
+plot(x, pmfBi, type = "h", main = "Binomial PMF", ylab = "f(x)")
+plot(t, mgfBi, type = "l", main="Binomial MGF", ylab = "M_X(t)")
+plot(t, log(mgfBi), type = "l", main="log(Binomial MGF)", ylab = "log(M_X(t))")
+```
+
+
+```{r}
+lam <- 5
+x <- 0:15
+t <- seq(-3,3,length=100)
+mgfPo <- exp(lam*(exp(t)-1))
+pmfPo <- dpois(x, lam)
+cdfPo <- ppois(x, lam)
+
+par(mfrow=c(2,2))
+plot(stepfun(x, c(0, cdfPo)), vertical = FALSE, pch = 16, main = "Poisson CDF", ylab = "F(x)")
+plot(x, pmfPo, type = "h", main = "Poisson PMF", ylab = "f(x)")
+plot(t, mgfPo, type = "l", main="Poisson MGF", ylab = "M_X(t)")
+plot(t, log(mgfPo), type = "l", main="log(Poisson MGF)", ylab = "log(M_X(t))")
+```
+
+```{r}
+mu <- 0
+sig2 <- 1
+x <- seq(-3,3,length=100)
+t <- seq(-4,4,length=100)
+mgfNo <- exp(mu*t + sig2*t^(2/2))
+pmfNo <- dnorm(x, mu, sqrt(sig2))
+cdfNo <- pnorm(x, mu, sqrt(sig2))
+
+par(mfrow=c(2,2))
+plot(stepfun(x, c(0, cdfNo)), vertical = FALSE, pch = 16, main = "Normal CDF", ylab = "F(x)")
+plot(x, pmfNo, type = "h", main = "Normal PMF", ylab = "f(x)")
+plot(t, mgfNo, type = "l", main="Normal MGF", ylab = "M_X(t)")
+plot(t, log(mgfNo), type = "l", main="log(Normal MGF)", ylab = "log(M_X(t))")
+```
+
+```{r}
+lam <- 3
+x <- seq(-3,3,length=100)
+t <- seq(-4,4,length=100)
+mgfExp <- lam/(lam - t)
+pmfExp <- dexp(x, lam)
+cdfExp <- pexp(x, lam)
+
+par(mfrow=c(2,2))
+plot(stepfun(x, c(0, cdfExp)), vertical = FALSE, pch = 16, main = "Exponential CDF", ylab = "F(x)")
+plot(x, pmfExp, type = "h", main = "Exponential PDF", ylab = "f(x)")
+plot(t, mgfExp, type = "l", main="Exponential MGF", ylab = "M_X(t)")
+#plot(t, log(mgfExp), type = "l", main="log(Exponential MGF)", ylab = "log(M_X(t))")
+```
+
+```{r}
+n <- c(5, 10, 100, 10000)
+p <- .1
+lam <- n*p
+
+par(mfrow=c(3, length(n)), mar = c(4.1, 4.1, 3.1, 1.1))
+for (i in 1:length(n)) {
+  xB <- 0:n[i]
+  plot(xB, dbinom(xB, n[i], p), type = "h", ylab = "Bin:f(x)",
+       main = n[i], xlab="x", xlim=c(0,2*n[i]), ylim = c(0,0.3))
+}
+
+
+for (i in 1:length(n)){
+  xP <- 0:(n[i]*2)
+  plot(xP, dpois(xP, lam[i]), type="h", ylab="Pois:f(x)", 
+                 main=n[i], xlab="x", xlim=c(0,2*n[i]), ylim=c(0,.3))
+}
+
+for (i in 1:length(n)){
+  r<-seq(0.001, 0.999, length = 100)
+  qqplot(qbinom(r,n[i],p), qpois(r,lam[i]), xlab="Binomial", ylab = "Poisson")
+  plot(qbinom(r, n[i], p), qpois(r, lam[i]), xlab = "Binomial", ylab = "Poisson")
+  abline(a=0, b=1)
+}
+
+dat <- as.data.frame(cbind(b=qbinom(r, n[i], p), p=qpois(r, lam[i])))
+summary(lm(p~b, data=dat))
+```
+
+
+
+```{r}
+p <- 0.2
+n <- 1000
+lam <- p*n
+N <- 10000
+
+po<-rpois(N,lam)
+bi<-rbinom(N,n,p)
+
+hp<-hist(po,plot=FALSE)
+hb<-hist(bi,plot=FALSE)
+plot(hp$mids, hp$density, type = "b", col = "purple", ylim=c(0,0.07),
+     xlim=c(min(c(po,bi)), max(c(po, bi))), xlab="X", ylab = "Estimated f(x)", main = paste("n=", n, "; p=", p, "; lam=", lam, sep = ""))
+lines(hb$mids, hb$density, type = "b", col = "blue")
+legend("topright", legend=c("Poisson", "Binomial"), col=c("purple", "blue"), lty=c(1,1), lwd=c(3,3))
+```
+
+```{r}
+lam<-100
+mu<-lam
+sig2<-lam
+N<-1000
+po<-rpois(N,lam)
+no<-rnorm(N,mu,sqrt(sig2))
+hp<-hist(po,plot=FALSE)
+hn<-hist(no,plot=FALSE)
+plot(hp$mids, hp$density, type="b", col="purple", ylim=c(0,.1),
+xlim=c(min(c(po,no)),max(c(po,no))),
+xlab="X", ylab="Estimated f(x)",
+main=paste("mu=",mu,"; sigmaˆ2=",sig2,"; lam=",lam, sep=""))
+lines(hn$mids, hn$density, type="b", col="blue")
+legend("topright", legend=c("Poisson", "Normal"),
+col=c("purple", "blue"), lty=c(1,1), lwd=c(3,3))
+```
+
+```{r}
+df<-5
+a<-df/2
+b<-1/2
+x<-seq(0,20,length=200)
+plot(x, dchisq(x,df), col="purple",xlab="X", ylab="f(x)",
+main=paste("nu=",df,"; a=",a,"; b=",b, sep=""), lwd=6, type="l")
+lines(x, dgamma(x,a,b), col="red",lwd=2)
+```
+
+```{r}
+lam<-2
+a<-1
+b<-lam
+x<-seq(0,6,length=200)
+plot(x, dexp(x,lam), col="purple",xlab="X", ylab="f(x)",
+main=paste("lam=",lam,"; a=",a, sep=""), lwd=5, type="l")
+lines(x, dgamma(x,a,b), col="red",lwd=2)
+```
+
+
+```{r}
+p<-.5
+r<-1
+x<-seq(0,10,by=1)
+plot(x, dnbinom(x,r,p), col="purple",xlab="X", ylab="f(x)",
+main=paste("p=",p,"; r=",r, sep=""), lwd=5, type="h")
+points(x, dgeom(x,p), col="red",lwd=2, type="h")
+```
+
+```{r}
+x<-seq(0,1,length=200)
+plot(x, dbeta(x,.5,2), col="red",xlab="X", ylab="f(x)", type="l",ylim=c(0,6))
+lines(x, dbeta(x,2,.5), col="orange")
+lines(x, dbeta(x,2,4), col="brown")
+lines(x, dbeta(x,4,2), col="green")
+lines(x, dbeta(x,1,1), col="blue")
+lines(x, dbeta(x,4,4), col="violet")
+legend("top", legend=c("Beta(.5,2)", "Beta(2,.5)", "Beta(2,4)",
+"Beta(4,2)", "Beta(1,1)", "Beta(4,4)"),
+col=c("red", "orange", "brown", "green", "blue", "violet"), lty=1, lwd=2)
+```
+
+```{r}
+ddoubleExpon<-function(x,mu,lambda){
+return(exp(-abs(x-mu)/lambda)/(2*lambda))
+}
+x<-seq(-3,3,length=200)
+plot(x, dnorm(x,0,1), col="red",xlab="X", ylab="f(x)", type="l",ylim=c(0,1))
+lines(x, dcauchy(x,0,1), col="orange")
+lines(x, dt(x,2), col="green")
+lines(x, ddoubleExpon(x, 0,1), col="blue")
+legend("topright", legend=c("Normal(0,1)", "Cauchy(0,1)",
+"t(2)", "DoubleExp(0,1)"),
+col=c("red", "orange", "green", "blue"), lty=1, lwd=2)
+```
+
+
+```{r}
+variances <- sapply(c(1:1000), function(x) rnorm(20)) %>% 
+  as.data.frame() %>% 
+  apply(2, var) %>% 
+  as.data.frame()
+
+
+colnames(variances) <- "variance"
+
+  ggplot()+
+  geom_histogram(aes(x = variances$variance))+
+  theme_classic()+
+  geom_line(aes(y = dgamma(seq(0, 5, 0.05), 8, 8)*200, x = seq(0, 5, 0.05)))
+```
+
+
+
+
+
+
+
+
+```{r}
+({1601}/{162527 + 1601})/({510}/{412368 + 510})
+```
+```{r}
+{1601*412368}/{162527*510}
+```
+
+```{r}
+seatbelt <- matrix(c(510, 412368, 1601, 162527), ncol = 2, byrow = TRUE)
+
+rownames(seatbelt) <- c("Wearing Seatbelt", "No Seatbelt")
+colnames(seatbelt) <- c("Death", "No Death")
+
+seatbelt <- as.table(seatbelt)
+
+mosaicplot(seatbelt, main = "Seatbelt usage and deaths in car accidents", ylab = "Car accident", xlab = "Seatbelt Usage")
+```
+
+
+
+
